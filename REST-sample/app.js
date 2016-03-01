@@ -1,4 +1,14 @@
 var express = require("express");
+var mongoose = require("mongoose");
+
+// Mongoose.connect takes in a connection string and bookAPI is simply the name of our database of which we'll connect.
+// When the app starts up, a connection to the bookAPI database is opened and holds it open until we're ready to use it.
+// Even if bookAPI database doesn't exist in mongodb, it will be created for you when mongoose.connect executes.
+var db = mongoose.connect("mongodb://localhost/bookAPI");
+
+// The way mongoose translate data extracted from mongodb is the use of models. We create a model of a book that lays out
+// what the data in mongodb would look like.
+var Book = require("./models/bookModel");
 
 var app = express();
 
@@ -11,10 +21,26 @@ var bookRouter = express.Router();
 
 // Whenever we try to GET the /Books route, express will call a function.
 bookRouter.route("/Books")
-    .get(function(req, res) {
-        // We create a sample json object and have the res send the json back to the client.
-        var responseJson = {hello: "This is my api"};
-        res.json(responseJson);
+    .get(function (req, res) {
+        // The query property is a query string passed along with the request. It's used in conjunction with Book.find.
+        // An example would be localhost:8000/api/books?genre=Science%20Fiction.
+        var query = {};
+
+        // The purpose of this if statement is to limit what the user's query filtering capabilities in the navbar. If
+        // the user queries by genre and that genre doesn't even exist then the user query will do nothing.
+        if (req.query.genre) {
+            query.genre = req.query.genre;
+        }
+
+        Book.find(query, function (err, books) {
+            // Errors will be captured in err while everything else will be in books.
+            if (err) {
+                res.status(500).send(err);
+            }
+            else {
+                res.json(books);
+            }
+        });
     });
 
 app.use("/api", bookRouter);
