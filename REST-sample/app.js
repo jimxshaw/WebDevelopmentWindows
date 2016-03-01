@@ -43,6 +43,20 @@ bookRouter.route("/Books")
         });
     });
 
+// Routing to GET a particular book by its id.
+bookRouter.route("/Books/:bookId")
+    .get(function (req, res) {
+        // The .findById method is used instead of .find and then we're passing in a book id as the first argument.
+        Book.findById(req.params.bookId, function (err, book) {
+            if (err) {
+                res.status(500).send(err);
+            }
+            else {
+                res.json(book);
+            }
+        });
+    });
+
 app.use("/api", bookRouter);
 
 // Whenever a request hits the root of our site, a callback function is executed. Express passes it two arguments req & res.
