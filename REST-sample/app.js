@@ -1,5 +1,6 @@
 var express = require("express");
 var mongoose = require("mongoose");
+var bodyParser = require("body-parser");
 
 // Mongoose.connect takes in a connection string and bookAPI is simply the name of our database of which we'll connect.
 // When the app starts up, a connection to the bookAPI database is opened and holds it open until we're ready to use it.
@@ -14,13 +15,29 @@ var app = express();
 
 var port = process.env.PORT || 3000;
 
+// After npm install body-parser and requiring up top, we have put the body-parser middleware in a use statement in order
+// for us the developer to use it below. We add the .json and .urlencoded methods to explicitly allow body-parser
+// to parse json and url encoded data. The extended: true option allows parsing with the qs library.
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
+
 // We could do direct routing with app.get() or we can spin up an instance of a router. We can use the router to define
 // our routes. We pass router into app.use() so that will take care of loading all the roots. This is a cleaning way to
 // do api routing.
 var bookRouter = express.Router();
 
-// Whenever we try to GET the /Books route, express will call a function.
+// Whenever we reach /Books route with a certain HTTP verb, express will execute the appropriate method with a callback function.
 bookRouter.route("/Books")
+    .post(function(req, res) {
+        // To POST data or create a new book, we first instantiate a new book model with the data from the request's
+        // body passed in.
+        var book = new Book(req.body);
+        // In order to use the POST data, we have to use a body parser. Body parser is a piece of middleware that allows
+        // express to read the body and the parse that into a json object that we can understand.
+        console.log(book);
+        res.send(book);
+
+    })
     .get(function (req, res) {
         // The query property is a query string passed along with the request. It's used in conjunction with Book.find.
         // An example would be localhost:8000/api/books?genre=Science%20Fiction.
