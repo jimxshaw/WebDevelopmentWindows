@@ -24,61 +24,16 @@ var port = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 
-// We could do direct routing with app.get() or we can spin up an instance of a router. We can use the router to define
-// our routes. We pass router into app.use() so that will take care of loading all the roots. This is a cleaning way to
-// do api routing.
-var bookRouter = express.Router();
+// To use the routes in another file, created a module variable, require the path and execute the module. The book model
+// is in a module variable called Book and it's injected into bookRouter when it executes. The reason we inject Book module
+// is so that the module can be used in bookRoutes.js.
+var bookRouter = require("./Routes/bookRoutes")(Book);
 
-// Whenever we reach /Books route with a certain HTTP verb, express will execute the appropriate method with a callback function.
-bookRouter.route("/Books")
-    .post(function(req, res) {
-        // To POST data or create a new book, we first instantiate a new book model with the data from the request's
-        // body passed in.
-        var book = new Book(req.body);
-
-        book.save();
-        // The status of 201 means something was created, which is our case is a new book.
-        // The reason we're also sending our book back is we want that id to be available to the client,
-        // whoever called our api.
-        res.status(201).send(book);
-    })
-    .get(function (req, res) {
-        // The query property is a query string passed along with the request. It's used in conjunction with Book.find.
-        // An example would be localhost:8000/api/books?genre=Science%20Fiction.
-        var query = {};
-
-        // The purpose of this if statement is to limit what the user's query filtering capabilities in the navbar. If
-        // the user queries by genre and that genre doesn't even exist then the user query will do nothing.
-        if (req.query.genre) {
-            query.genre = req.query.genre;
-        }
-
-        Book.find(query, function (err, books) {
-            // Errors will be captured in err while everything else will be in books.
-            if (err) {
-                res.status(500).send(err);
-            }
-            else {
-                res.json(books);
-            }
-        });
-    });
-
-// Routing to GET a particular book by its id.
-bookRouter.route("/Books/:bookId")
-    .get(function (req, res) {
-        // The .findById method is used instead of .find and then we're passing in a book id as the first argument.
-        Book.findById(req.params.bookId, function (err, book) {
-            if (err) {
-                res.status(500).send(err);
-            }
-            else {
-                res.json(book);
-            }
-        });
-    });
-
-app.use("/api", bookRouter);
+// Currently, only the book model for the book router has been implemented. In the future, should we want additional routes
+// for authors or genres, we can create the author model or genre model.
+app.use("/api/books", bookRouter);
+//app.use("/api/authors", authorRouter);
+//app.use("/api/genres", genreRouter);
 
 // Whenever a request hits the root of our site, a callback function is executed. Express passes it two arguments req & res.
 // The client's request is req and the response we send back is res.
