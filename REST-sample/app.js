@@ -16,7 +16,10 @@ var app = express();
 var port = process.env.PORT || 3000;
 
 // After npm install body-parser and requiring up top, we have put the body-parser middleware in a use statement in order
-// for us the developer to use it below. We add the .json and .urlencoded methods to explicitly allow body-parser
+// for us the developer to use it below.
+// In order to POST data, we have to use a body parser. Body parser is a piece of middleware that allows
+// express to read the body and the parse that into a json object that we can understand.
+// We add the .json and .urlencoded methods to explicitly allow body-parser
 // to parse json and url encoded data. The extended: true option allows parsing with the qs library.
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
@@ -32,11 +35,12 @@ bookRouter.route("/Books")
         // To POST data or create a new book, we first instantiate a new book model with the data from the request's
         // body passed in.
         var book = new Book(req.body);
-        // In order to use the POST data, we have to use a body parser. Body parser is a piece of middleware that allows
-        // express to read the body and the parse that into a json object that we can understand.
-        console.log(book);
-        res.send(book);
 
+        book.save();
+        // The status of 201 means something was created, which is our case is a new book.
+        // The reason we're also sending our book back is we want that id to be available to the client,
+        // whoever called our api.
+        res.status(201).send(book);
     })
     .get(function (req, res) {
         // The query property is a query string passed along with the request. It's used in conjunction with Book.find.
