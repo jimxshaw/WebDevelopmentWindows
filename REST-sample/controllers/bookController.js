@@ -8,12 +8,19 @@ var bookController = function (Book) {
         // body passed in.
         var book = new Book(req.body);
 
-        book.save();
-        // The status of 201 means something was created, which is our case is a new book.
-        // The reason we're also sending our book back is we want that id to be available to the client,
-        // whoever called our api.
-        res.status(201);
-        res.send(book);
+        if (!req.body.title) {
+            // If there's no title in the request, send a particular status and message.
+            res.status(400);
+            res.send("Title is required");
+        }
+        else {
+            book.save();
+            // The status of 201 means something was created, which is our case is a new book.
+            // The reason we're also sending our book back is we want that id to be available to the client,
+            // whoever called our api.
+            res.status(201);
+            res.send(book);
+        }
     };
 
     var get = function (req, res) {

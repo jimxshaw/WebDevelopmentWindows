@@ -4,16 +4,17 @@ var should = require("should");
 var sinon = require("sinon");
 
 // Describe what we're testing and the function that will execute. Multiple describes can be chained together.
-describe("Book Controller Tests", function() {
+describe("Book Controller Tests", function () {
     // This is testing the post method of the book controller.
-    describe("Post", function() {
-        it("should not allow an empty title on post", function() {
+    describe("Post", function () {
+        it("should not allow an empty title on post", function () {
             // Take a look at the actual post method inside book controller and see what is needed to replicate that.
             // We need a new instance of a book, a .save method, a req.body and a status code.
-            var Book = function(book) {
+            var Book = function (book) {
                 // Here's a mock instance of a book and a .save method, which doesn't need any actual implementation
                 // because in this particular test we're not testing the ability to save.
-                this.save = function(){};
+                this.save = function () {
+                };
             };
 
             // We're testing to see if an error is thrown when a title isn't included so we'll just send an author
