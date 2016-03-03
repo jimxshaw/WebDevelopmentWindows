@@ -46,7 +46,7 @@ var routes = function (Book) {
             });
         });
 
-    // Routing to GET a particular book by its id.
+    // Routing to GET, PUT, PATCH a particular book by its id.
     bookRouter.route("/:bookId")
         .get(function (req, res) {
             // The .findById method is used instead of .find and then we're passing in a book id as the first argument.
@@ -58,7 +58,26 @@ var routes = function (Book) {
                     res.json(book);
                 }
             });
-        });
+        })
+        .put(function(req, res) {
+            // PUT aka update is similar to GET except that the existing book's property values are updated with the
+            // values that come in from the request. If the request values are empty then that particular book's updated
+            // values will be empty as well.
+            Book.findById(req.params.bookId, function (err, book) {
+                if (err) {
+                    res.status(500).send(err);
+                }
+                else {
+                    book.title = req.body.title;
+                    book.author = req.body.author;
+                    book.genre = req.body.genre;
+                    book.read = req.body.read;
+                    book.save(); // Saves the update to mongodb.
+                    res.json(book);
+                }
+            });
+        })
+        .patch();
 
     return bookRouter;
 };
