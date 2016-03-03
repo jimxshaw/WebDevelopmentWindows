@@ -115,6 +115,19 @@ var routes = function (Book) {
                     res.json(req.book);
                 }
             });
+        })
+        .delete(function(req, res) {
+            // Take whatever book is found up in our middleware and remove it from mongodb. A callback is written to
+            // handle errors and to display the removed status.
+            req.book.remove(function(err) {
+                if (err) {
+                    res.status(500).send(err);
+                }
+                else {
+                    // Status 204 means no content, nothing is there.
+                    res.status(204).send("Removed");
+                }
+            });
         });
 
     return bookRouter;
