@@ -11,40 +11,13 @@ var routes = function (Book) {
     // do api routing.
     var bookRouter = express.Router();
 
-    // Whenever we reach /Books route with a certain HTTP verb, express will execute the appropriate method with a callback function.
+    var bookController = require("../controllers/bookController")(Book);
+    // Whenever we reach /Books route with a certain HTTP verb, express will execute the appropriate method with a
+    // callback function that's located in our book controller. Of course we also pass in Book, the book model module,
+    // so that the members in the book controller will have access to the book model.
     bookRouter.route("/")
-        .post(function (req, res) {
-            // To POST data or create a new book, we first instantiate a new book model with the data from the request's
-            // body passed in.
-            var book = new Book(req.body);
-
-            book.save();
-            // The status of 201 means something was created, which is our case is a new book.
-            // The reason we're also sending our book back is we want that id to be available to the client,
-            // whoever called our api.
-            res.status(201).send(book);
-        })
-        .get(function (req, res) {
-            // The query property is a query string passed along with the request. It's used in conjunction with Book.find.
-            // An example would be localhost:8000/api/books?genre=Science%20Fiction.
-            var query = {};
-
-            // The purpose of this if statement is to limit what the user's query filtering capabilities in the navbar. If
-            // the user queries by genre and that genre doesn't even exist then the user query will do nothing.
-            if (req.query.genre) {
-                query.genre = req.query.genre;
-            }
-
-            Book.find(query, function (err, books) {
-                // Errors will be captured in err while everything else will be in books.
-                if (err) {
-                    res.status(500).send(err);
-                }
-                else {
-                    res.json(books);
-                }
-            });
-        });
+        .post(bookController.post)
+        .get(bookController.get);
 
     // DRY means Don't Repeat Yourself. Our book routes will involve repeated code so that means it's time to add some
     // middleware to handle that. What this middleware does is it's going to do a findById and to find the book id. If
