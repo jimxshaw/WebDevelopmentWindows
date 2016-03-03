@@ -12,7 +12,8 @@ var bookController = function (Book) {
         // The status of 201 means something was created, which is our case is a new book.
         // The reason we're also sending our book back is we want that id to be available to the client,
         // whoever called our api.
-        res.status(201).send(book);
+        res.status(201);
+        res.send(book);
     };
 
     var get = function (req, res) {

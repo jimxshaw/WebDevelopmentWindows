@@ -1,5 +1,6 @@
 var gulp = require("gulp");
 var nodemon = require("gulp-nodemon");
+var gulpMocha = require("gulp-mocha");
 
 // Gulp is a task-runner and we npm installed the gulp-nodemon because we want gulp to run nodemon in addition to many
 // other tasks. All we have to do is tell gulp we have a task and have a function that will setup nodemon.
@@ -20,7 +21,14 @@ gulp.task("default", function() {
     });
 });
 
+// Mocha is a unit testing framework and gulp-mocha is built to work with gulp.
+// We're going to pull in all of our tests from our tests directory and have gulp run them. We then pipe that into gulp-mocha.
 
+// To run the tests, execute gulp test .
+gulp.task("test", function() {
+    gulp.src("tests/*.js", {read: false})
+        .pipe(gulpMocha({reporter: "nyan"}));
+});
 
 
 
