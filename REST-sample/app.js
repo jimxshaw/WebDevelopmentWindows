@@ -5,7 +5,16 @@ var bodyParser = require("body-parser");
 // Mongoose.connect takes in a connection string and bookAPI is simply the name of our database of which we'll connect.
 // When the app starts up, a connection to the bookAPI database is opened and holds it open until we're ready to use it.
 // Even if bookAPI database doesn't exist in mongodb, it will be created for you when mongoose.connect executes.
-var db = mongoose.connect("mongodb://localhost/bookAPI");
+var db;
+
+// For testing purposes, we have to set up multiple environments. Which db instance mongoose connects to depends on the
+// ENV variable set in our gulp task.
+if (process.env.ENV == "Test") {
+    db = mongoose.connect("mongodb://localhost/bookAPI_test");
+}
+else {
+    db = mongoose.connect("mongodb://localhost/bookAPI");
+}
 
 // The way mongoose translate data extracted from mongodb is the use of models. We create a model of a book that lays out
 // what the data in mongodb would look like.
@@ -21,7 +30,7 @@ var port = process.env.PORT || 3000;
 // express to read the body and the parse that into a json object that we can understand.
 // We add the .json and .urlencoded methods to explicitly allow body-parser
 // to parse json and url encoded data. The extended: true option allows parsing with the qs library.
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 // To use the routes in another file, created a module variable, require the path and execute the module. The book model

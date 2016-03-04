@@ -1,6 +1,10 @@
 var gulp = require("gulp");
 var nodemon = require("gulp-nodemon");
 var gulpMocha = require("gulp-mocha");
+// gulp-env package allows us to manipulate the environment variables in Gulp so that we can set up a test environment.
+// The test environment would be used for end-to-end testing.
+var env = require("gulp-env");
+var supertest = require("supertest");
 
 // Gulp is a task-runner and we npm installed the gulp-nodemon because we want gulp to run nodemon in addition to many
 // other tasks. All we have to do is tell gulp we have a task and have a function that will setup nodemon.
@@ -26,6 +30,9 @@ gulp.task("default", function () {
 
 // To run the tests, execute gulp test .
 gulp.task("test", function () {
+    // When we're in our app.js, we can do a process.env and pull in our environment: prod, dev or test. That will be
+    // governed by our gulp execution.
+    env({vars: {ENV: "Test"}});
     gulp.src("tests/*.js", {read: false})
         .pipe(gulpMocha({reporter: "nyan"}));
 });
