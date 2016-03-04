@@ -54,7 +54,8 @@ app.listen(port, function () {
     console.log("Gulp is running my app on PORT: " + port);
 });
 
-
+// Our app needs to be exported so that supertest, for example, can execute on the app.
+module.exports = app;
 
 
 

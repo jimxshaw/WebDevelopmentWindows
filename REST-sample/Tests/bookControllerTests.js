@@ -1,5 +1,5 @@
 // Tests on our book controller are placed here.
-// Mocha is referenced directly because mocha will run with gulp as part of the installed npm gulp-mocha package.
+// Mocha is not referenced directly because mocha will run with gulp as part of the installed npm gulp-mocha package.
 var should = require("should");
 var sinon = require("sinon");
 
