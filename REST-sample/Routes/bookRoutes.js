@@ -44,10 +44,17 @@ var routes = function (Book) {
     // Routing to GET, PUT, PATCH a particular book by its id.
     bookRouter.route("/:bookId")
         .get(function (req, res) {
+            // In order to filter our list of books by genre, we'll make the genre property into a hyperlink.
+            var returnBook = req.book.toJSON();
+            returnBook.links = {};
+            var newLink = "http://" + req.headers.host + "/api/books/?genre=" + returnBook.genre;
+            // For genres with spaces between the words, we'll replace the spaces with %20.
+            returnBook.links.FilterByThisGenre = newLink.replace(" ", "%20");
+
             // The user's request would hit our middleware with our Book.findById() before ever reaching here. If the
             // book exists then the middleware assigns it to req.book, the same req.book that's passed into res.json below.
             // If the book doesn't exist then the req will never reach here because a 404 status would have displayed.
-            res.json(req.book);
+            res.json(returnBook);
         })
         .put(function (req, res) {
             // PUT aka update is similar to GET except that the existing book's property values are updated with the
