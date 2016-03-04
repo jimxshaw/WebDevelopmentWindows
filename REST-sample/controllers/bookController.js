@@ -40,7 +40,21 @@ var bookController = function (Book) {
                 res.status(500).send(err);
             }
             else {
-                res.json(books);
+                // The purpose of this large else statement is to add hyperlinks to our list of books without having
+                // to modify the mongoose book model in bookModel.js.
+                // First, we declare an empty array to be used to hold our returned books that have links on them. We
+                // loop through the unmodified array of books, for each old book json object we assign to a newly created
+                // book object called newBook. Each newBook will have then have an additional property called link, which
+                // is an object. Within that links object will be a key-value pair, key being self and the value being
+                // the hyperlink to itself. Finally, we push the modified newBook into our returnBooks array.
+                var returnBooks = [];
+                books.forEach(function(element, index, array) {
+                    var newBook = element.toJSON();
+                    newBook.links = {};
+                    newBook.links.self = "http://" + req.headers.host + "/api/books/" + newBook._id;
+                    returnBooks.push(newBook);
+                });
+                res.json(returnBooks);
             }
         });
     }
